@@ -485,6 +485,13 @@ def validate_document_access(user: str, doctype: str, name: str, perm_type: str 
 
         # Check document-level permissions (if document exists)
         if name:
+            if not frappe.db.exists(doctype, name):
+                meta = frappe.get_meta(doctype)
+                title_field = getattr(meta, "title_field", None)
+                filters = {(title_field or "name"): ["like", f"%{name}%"]}
+                fields = ["name"] + ([title_field] if title_field else [])
+                suggestions = frappe.get_all(doctype, filters=filters, fields=fields, limit=5)
+                return {"success": False, "error": f"{doctype} {name} not found", "suggestions": suggestions}
             if not frappe.has_permission(doctype, perm_type, doc=name, user=user):
                 return {
                     "success": False,
