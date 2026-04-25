@@ -1,7 +1,7 @@
 import os
 import pkgutil
 
-__version__ = "2.3.3"
+__version__ = "2.4.0"
 
 _inner = os.path.join(os.path.dirname(__file__), __name__)
 if os.path.isdir(_inner):
